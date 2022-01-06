@@ -1,39 +1,43 @@
-/*
-  Blink
+#include <SPI.h>
+#include "nRF24L01.h"
+#include "RF24.h"
+#include "printf.h"
 
-  Turns an LED on for one second, then off for one second, repeatedly.
+RF24 radio(9, 10);
+// Single radio pipe address for the 2 nodes to communicate.
+const uint64_t pipe = 0xE8E8F0F0E1LL;
 
-  Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO
-  it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to
-  the correct LED pin independent of which board is used.
-  If you want to know what pin the on-board LED is connected to on your Arduino
-  model, check the Technical Specs of your board at:
-  https://www.arduino.cc/en/Main/Products
+// Pins on the remote for buttons
+const uint8_t button_pins[] = { 2, 3, 4, 5, 6, 7 };
+const uint8_t num_button_pins = sizeof(button_pins);
 
-  modified 8 May 2014
-  by Scott Fitzgerald
-  modified 2 Sep 2016
-  by Arturo Guadalupi
-  modified 8 Sep 2016
-  by Colby Newman
+// Pins on the LED board for LED's
+const uint8_t led_pins[] = { 2, 3, 4, 5, 6, 7 };
+const uint8_t num_led_pins = sizeof(led_pins);
 
-  This example code is in the public domain.
+uint8_t button_states[10];
+uint8_t led_states[num_led_pins];
 
-  https://www.arduino.cc/en/Tutorial/BuiltInExamples/Blink
-*/
+
+
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 char mode='s';
-// the setup function runs once when you press reset or power the board
+
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
   pinMode(3, OUTPUT);
   pinMode(5, OUTPUT);
   pinMode(6, OUTPUT);
   pinMode(7, OUTPUT);
   Serial.begin(9600);
+    printf_begin();
     inputString.reserve(200);
+
+    radio.begin();
+    radio.openReadingPipe(1, pipe);
+    radio.startListening();
 }
+
 
 // the loop function runs over and over again forever
 void loop() {
@@ -44,8 +48,35 @@ void loop() {
     mode=inputString[0];
     inputString = "";
     stringComplete = false;
+    
   }
-  
+//printf("Got buttons\n\r");
+    if ( radio.available() )
+    {
+     // printf("Got buttons\n\r");
+      // Dump the payloads until we've gotten everything
+      while (radio.available())
+      {
+        // Fetch the payload, and see if this was the last one.
+        radio.read( button_states, num_button_pins );
+        //Variable[] val={button_states[0],button_states[1]};
+       //String mess=(String)button_states;
+        // Spew it
+        //printf("Got buttons\n\r");
+        Serial.print(button_states[0]);
+        Serial.print(button_states[1]);
+        Serial.print(button_states[2]);
+        Serial.print(button_states[3]);
+        Serial.print(button_states[4]);
+        Serial.print(button_states[5]);
+        Serial.print(button_states[6]);
+        Serial.print(button_states[7]);
+        Serial.print(button_states[8]);
+        Serial.print(button_states[9]);
+        Serial.println(button_states[10]);
+      }
+    }
+  delay(500);
  switch (mode) {
   case 's':
     Stop();
