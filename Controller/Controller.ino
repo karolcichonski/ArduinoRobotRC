@@ -29,16 +29,19 @@ void loop() {
   sensorValue1 = analogRead(analogInPin1);
   String val0=(String)sensorValue0;
   String val1=(String)sensorValue1;
-  String mess=val0+";"+val1;
+  String mess="S";
+  int tmp=951;
+  
   //Serial.print(sensorValue0);
   //Serial.print(";");
   //Serial.print(sensorValue1);
   //Serial.print(";");
   //Serial.println(millis());
-  printf("Now sending...");
+  //printf("Now sending...");
   
   //bool ok = radio.write( &sensorValue0, sizeof(sensorValue0));
-  bool ok = radio.write( &mess, sizeof(mess));
+  bool ok = radio.write( &tmp, sizeof(tmp));
+  ok = radio.write( &mess, sizeof(mess));
   if (ok)
     printf("ok\n\r");
   else

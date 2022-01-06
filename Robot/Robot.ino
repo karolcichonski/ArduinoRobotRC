@@ -15,7 +15,7 @@ const uint8_t num_button_pins = sizeof(button_pins);
 const uint8_t led_pins[] = { 2, 3, 4, 5, 6, 7 };
 const uint8_t num_led_pins = sizeof(led_pins);
 
-uint8_t button_states[10];
+uint8_t button_states[5];
 uint8_t led_states[num_led_pins];
 
 
@@ -63,6 +63,8 @@ void loop() {
        //String mess=(String)button_states;
         // Spew it
         //printf("Got buttons\n\r");
+
+        String str=converter(button_states);
         Serial.print(button_states[0]);
         Serial.print(button_states[1]);
         Serial.print(button_states[2]);
@@ -76,7 +78,7 @@ void loop() {
         Serial.println(button_states[10]);
       }
     }
-  delay(500);
+  //delay(500);
  switch (mode) {
   case 's':
     Stop();
@@ -148,3 +150,7 @@ void serialEvent() {
     }
   }
 }
+
+    String converter(uint8_t *str){
+        return String((char *)str);
+   }
